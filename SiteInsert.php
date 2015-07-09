@@ -20,7 +20,7 @@ author:Dimuthu
     <link rel="stylesheet" type="text/css" href="boostrap/css/bootstrap.min.css">
 
     <body>
-        <form action="com.ebox.hovael.db/Site.php" method="POST">
+        <form action="com.ebox.hovael.db/SiteToController.php" method="POST" id="insertForm">
             <label>Site Type ID : </label>
             <label ><?php echo $_SESSION['id'] ?></label><br>
             <input type="hidden" value="<?php echo $_SESSION['id'] ?>" name="id">
@@ -32,7 +32,7 @@ author:Dimuthu
             <label> Permanent : </label><input type="checkbox" name="permanent" ><br>
             <label> Status : </label><input type="checkbox" name="status"><br>
             <input type="hidden" value="insert" name="function">
-            <input type="submit" value="Add" id="submit" disabled>
+            <input type="submit" value="Add" id="submit">
         </form>
 
         <script type="text/javascript" src="./com.ebox.hovael.js/jquery-2.1.3.min.js"></script>  
@@ -56,11 +56,11 @@ author:Dimuthu
                 if (isDate($(this).val())) {
                     //alert('aaa');
                     $isStartDateOk = true;
-                    if ($isEndDateOk && $isStartDateOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
+//                    if ($isEndDateOk && $isStartDateOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
                 } else {
                     $isStartDateOk = false;
                 }
@@ -70,11 +70,11 @@ author:Dimuthu
                 if (isDate($(this).val())) {
                     //alert('bbb');
                     $isEndDateOk = true;
-                    if ($isEndDateOk && $isStartDateOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
+//                    if ($isEndDateOk && $isStartDateOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
                 } else {
                     $isEndDateOk = false;
                 }
@@ -82,30 +82,37 @@ author:Dimuthu
 
             var allInputs = $(":input");
 
-            $.each(allInputs, function (key, value) {
-                $(value).focusout(function () {
-                    if ($isEndDateOk && $isStartDateOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
+//            $.each(allInputs, function (key, value) {
+//                $(value).focusout(function () {
+//                    if ($isEndDateOk && $isStartDateOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//            });
+//            $('#permanent').change(function () {
+//                if ($isEndDateOk && $isStartDateOk) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+//
+//            $('#status').change(function () {
+//                if ($isEndDateOk && $isStartDateOk) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
 
-            });
-            $('#permanent').change(function () {
-                if ($isEndDateOk && $isStartDateOk) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
-            $('#status').change(function () {
-                if ($isEndDateOk && $isStartDateOk) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
+            $(document).on('submit', '#insertForm', function () {
+                if (!$isEndDateOk || !$isStartDateOk) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
+                } 
             });
 
         </script>

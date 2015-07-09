@@ -9,7 +9,7 @@ class Site{
     private $sitemanager;
     private $permanent;
     private $status;
-
+    
     function __construct($id, $location, $startdate, $enddate, $projectmanager, $sitemanager, $permanent, $status) {
         $this->id = $id;
         $this->location = $location;

@@ -15,7 +15,7 @@ author:Dimuthu
     include './com.ebox.hovael.db/autoIncrementID.php';
     ?>
     <body>
-        <form action="com.ebox.hovael.db/InventoryType.php" method="POST">
+        <form action="com.ebox.hovael.db/InventoryTypeToController.php" method="POST">
             <label>Inventory Type ID : </label>
             <label ><?php echo $_SESSION['id'] ?></label><br>
             <input type="hidden" value="<?php echo $_SESSION['id'] ?>" name="id">

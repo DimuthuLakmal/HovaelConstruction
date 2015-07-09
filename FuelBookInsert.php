@@ -17,7 +17,7 @@ author:Dimuthu
     include './com.ebox.hovael.db/autoIncrementID.php';
     ?>
     <body>
-        <form action="FuelBookInsert.php" method="POST">
+        <form action="com.ebox.hovael.db/FuelBook.php" method="POST" id="insertForm">
             <label>Fuel Book ID : </label>
             <label ><?php echo $_SESSION['id'] ?></label><br>
             <input type="hidden" value="<?php echo $_SESSION['id'] ?>" name="id">
@@ -32,7 +32,7 @@ author:Dimuthu
             <label> Remarks : </label><input type="text" name="remarks" id="remarks"><br>
             <label> Status : </label><input type="checkbox" name="status" id="status"><br>
             <input type="hidden" value="insert" name="function">
-            <input type="submit" value="Add" id="submit" disabled>
+            <input type="submit" value="Add" id="submit">
         </form>
         <script type="text/javascript" src="./com.ebox.hovael.js/jquery-2.1.3.min.js"></script> 
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>         
@@ -93,36 +93,42 @@ author:Dimuthu
                 }
             });
 
-            var allInputs = $(":input");
+//            var allInputs = $(":input");
+//
+//            $.each(allInputs, function (key, value) {
+//
+//                $(value).focusout(function () {
+//                    if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//            });
+//            $('#fuel').change(function () {
+//                
+//                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+//
+//            $('#status').change(function () {
+//                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
 
-            $.each(allInputs, function (key, value) {
-
-                $(value).focusout(function () {
-                    if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-
-            });
-            $('#fuel').change(function () {
-                
-                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
+            $(document).on('submit', '#insertForm', function () {
+                if (!$isDateOk || !$isRegNoOk || !$.isNumeric($('#meterreading').val()) || !$.isNumeric($('#qty').val())) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
                 }
             });
-
-            $('#status').change(function () {
-                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
         </script>
     </body>
 </html>

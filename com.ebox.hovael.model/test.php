@@ -9,7 +9,8 @@
     </head>
     <body>
         <?php 
-            $site = new Site('fsd', 'fsda', 'fdsa', 'fdsa', 'fdsa', 'fdsa', 'fdsa', 'fdsa');
+            $site = new Site();
+            $site->setEnddate('fadsf');
             echo $site->getEnddate();
         ?>
         

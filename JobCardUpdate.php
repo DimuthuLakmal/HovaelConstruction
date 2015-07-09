@@ -34,7 +34,7 @@
                 </tbody>
             </table>
         </div>
-        <div id="modalWindow" class="col-md-11 portBox">
+        <div id="modalWindow" class="col-md-11 portBox" style="display: none">
             <form id="form">
                 <label>Job Card ID : </label>
                 <label id="idlabel"></label><br>
@@ -48,7 +48,6 @@
                 <label> Doc Job No : </label><input type="text" name="docjobno" id="docjobno" required><br>
                 <label> Present Meter: </label><input type="text" name="presentmeter" id="presentmeter" required><br>
                 <label> Next Meter: </label><input type="text" name="nextmeter" id="nextmeter" required><br>
-                <label> Status : </label><input type="checkbox" name="status" id="status"><br>
                 <input type="hidden" name="function" value="insert">
                 <input type="submit" value="Update" id="submit" onclick="updateForm();">
             </form>
@@ -257,11 +256,11 @@
                 $('#docjobno').val($('#row' + id + 'docjobno').html());
                 $('#presentmeter').val($('#row' + id + 'presentmeter').html());
                 $('#nextmeter').val($('#row' + id + 'nextmeter').html());
-
+                
                 if ($('#row' + id + "status").val() == '1') {
                     $('#status').prop('checked', true);
                 }
-
+                
                 jQuery.ajax({
                     type: "POST",
                     url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/Lubricant.php',
@@ -296,7 +295,7 @@
                                 } else {
                                     $('#lubricantrow' + cellData[0]).append("<td id=\"lubricantrow" + cellData[0] + "status\"><input type=\"checkbox\" ></td>");
                                 }
-                                //$('#row' + cellData[0]).append("<td><button class=\"btn btn-primary\" onclick=\"update('" + cellData[0] + "')\" id=\"button" + cellData[0] + "\">Update</button></td>");
+                                
 
                             });
 
@@ -399,7 +398,7 @@
                         }
                     }
                 });
-
+                $('#modalWindow').show();
                 $('#modalButton').click();
             }
         </script>

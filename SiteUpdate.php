@@ -104,6 +104,7 @@ author:Dimuthu
             $isEndDateOk = true;
             $('#startdate').change(function () {
                 if (isDate($(this).val())) {
+                    //alert('aaa');
                     $isStartDateOk = true;
                     if ($isEndDateOk && $isStartDateOk) {
                         $('#submit').removeAttr('disabled');
@@ -118,7 +119,6 @@ author:Dimuthu
             $('#enddate').change(function () {
                 if (isDate($(this).val())) {
                     //alert('bbb');
-					//alert('fsadf);
                     $isEndDateOk = true;
                     if ($isEndDateOk && $isStartDateOk) {
                         $('#submit').removeAttr('disabled');
@@ -157,7 +157,6 @@ author:Dimuthu
                     $('#submit').attr('disabled', true);
                 }
             });
-
 
         </script>
     </body>

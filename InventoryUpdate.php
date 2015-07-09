@@ -102,7 +102,8 @@ author:Dimuthu
                                     status = 'Available';
                                 }
                                 var inventoryTypeId = rowDetail[13];
-                                $("#table" + category).append("<tr id=\"row" + i.toString() + category + "\"><td>" + rowDetail[0] + "</td><td>" + rowDetail[1] + "</td><td>" + rowDetail[2] + "</td><td>" + rowDetail[3] + "</td><td>" + rowDetail[4] + "</td><td>" + rowDetail[5] + "</td><td>" + rowDetail[6] + "</td><td>" + rowDetail[7] + "</td><td>" + rowDetail[8] + "</td><td>" + rowDetail[9] + "</td><td>" + rowDetail[10] + "</td><td>" + rowDetail[11] + "</td><td>" + status + "</td><td><button class=\"btn btn-primary\" onclick=\"update('" + i.toString() + category + "','" + inventoryTypeId + "')\" id=\"button" + i.toString() + category + "\">Update</button></td></tr>")
+                                $("#table" + category).append("<tr id=\"row" + i.toString() + category + "\"><td>" + rowDetail[0] + "</td><td>" + rowDetail[1] + "</td><td>" + rowDetail[2] + "</td><td>" + rowDetail[3] + "</td><td>" + rowDetail[4] + "</td><td>" + rowDetail[5] + "</td><td>" + rowDetail[6] + "</td><td>" + rowDetail[7] + "</td><td>" + rowDetail[8] + "</td><td>" + rowDetail[9] + "</td><td>" + rowDetail[10] + "</td><td>" + rowDetail[11] + "</td><td></td><td><button class=\"btn btn-primary\" onclick=\"update('" + i.toString() + category + "','" + inventoryTypeId + "')\" id=\"button" + i.toString() + category + "\">Update</button></td></tr>")
+                                i++;
                             });
                         }
                         else {
@@ -132,14 +133,7 @@ author:Dimuthu
                     }
                     columnCount++;
                 });
-                $("#updateform").append("<div class=\"form-group\"><label  class=\"col-sm-2 control-label\">Status</label><div class=\"col-sm-10\"><select class=\"form-control\" id=\"status\" name=\"status\"><option value=\"1\">Available</option><option value=\"0\">Not Available</option></select></div></div>");
-                if (status == 'Available') {
-                    $('#status').val('1');
 
-                } else {
-                    $('#status').val('0');
-                }
-                //alert(oldValues[2]);
                 $('#updateform').append("<input type=\"hidden\" name=\"idinventorytype\" value=\"" + inventoryTypeId + "\">");
                 $('#updateform').append("<input type=\"hidden\" name=\"function\" value=\"update\">");
                 $('#updateform').append("<div id=\"updatealert\" class=\"alert alert-danger\" role=\"alert\"><span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span><span class=\"sr-only\">Error:</span>If you update, It will effect to other data</div>");
@@ -183,7 +177,7 @@ author:Dimuthu
                     var matches = $(this).val().match(/\d+/g);
                     if (matches != null && $.isNumeric(x[1])) {
                         $isRegNoOk = true;
-                    }else{
+                    } else {
                         $isRegNoOk = false;
                     }
                 }
@@ -191,7 +185,7 @@ author:Dimuthu
             $(document).on('focusout', '#year', function () {
                 if ($.isNumeric($('#year').val()) && $('#year').val() <= (new Date).getFullYear() && $('#year').val() >= 1900) {
                     $isYearOk = true;
-                }else{
+                } else {
                     $isYearOk = false;
                 }
 
@@ -200,7 +194,7 @@ author:Dimuthu
             $(document).on('focusout', '#date', function () {
                 if (isDate($(this).val())) {
                     $isDateOk = true;
-                }else{
+                } else {
                     $isDateOk = false;
                 }
             });
@@ -208,30 +202,34 @@ author:Dimuthu
 
             var allInputs = $(":input");
 
-            $.each(allInputs, function (key, value) {
-                $(document).on('focusout', value, function () {
-                    if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
-                        $('#updateButton').attr('disabled', true);
-                    }else{
-                        $('#updateButton').attr('disabled', false);
-                    }
-                });
-                $(document).on('change', '#type', function () {
-                    if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
-                        $('#updateButton').attr('disabled', true);
-                    }else{
-                        $('#updateButton').attr('disabled', false);
-                    }
-                });
-
-                $(document).on('change', '#status', function () {
-                    if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
-                        $('#updateButton').attr('disabled', true);
-                    }else{
-                        //alert('fsdaf');
-                        $('#updateButton').attr('disabled', false);
-                    }
-                });
+//            $.each(allInputs, function (key, value) {
+//                $(document).on('focusout', value, function () {
+//                    if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
+//                        $('#updateButton').attr('disabled', true);
+//                    } else {
+//                        $('#updateButton').attr('disabled', false);
+//                    }
+//                });
+//                $(document).on('change', value, function () {
+//                    if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
+//                        $('#updateButton').attr('disabled', true);
+//                    } else {
+//                        $('#updateButton').attr('disabled', false);
+//                    }
+//                });
+//            });
+//            $(document).on('change', '#type', function () {
+//                if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
+//                    $('#updateButton').attr('disabled', true);
+//                } else {
+//                    $('#updateButton').attr('disabled', false);
+//                }
+//            });
+            $(document).on('submit', '#updateform', function () {
+                if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
+                } 
             });
         </script>
     </body>

@@ -23,7 +23,7 @@ author:Dimuthu
                 <option value="Machinery">Machinery</option>
                 <option value="Equipment">Equipment</option>
             </select><br>
-            <label> Service : </label><input type="text" name="service" id="service"><br>
+            <label> Service : </label><input type="text" name="service" id="service" required><br>
             <label> Status : </label><input type="checkbox" name="status" id="status"><br>
             <input type="hidden" value="update" name="function">
             <input type="submit" value="Update">

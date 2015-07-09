@@ -12,7 +12,11 @@ if (isset($_POST['functionname'])) {
         echo json_encode($aResult);
     }
     if ('searchBetween' == $_POST['functionname']) {
-        $aResult['result'] = searchBetween();
+        $aResult = searchBetween();
+        $myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
+        fwrite($myfile, $aResult[0]);
+
+        fclose($myfile);
         echo json_encode($aResult);
     }
 }
@@ -26,8 +30,8 @@ if (isset($_POST['function']) && !empty($_POST['function']) && 'update' == $_POS
 }
 
 function searchBetween() {
-    $fromdate=$_POST['fromdate'];
-    $todate=$_POST['todate'];
+    $fromdate = $_POST['fromdate'];
+    $todate = $_POST['todate'];
     $query = "SELECT * FROM fuelbook where date between '$fromdate' and '$todate'";
     $data = array();
     $index = 0;

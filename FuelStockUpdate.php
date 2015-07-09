@@ -29,9 +29,9 @@
                 </tbody>
             </table>
         </div>
-        <div id="modalWindow" class="col-md-6 portBox">
+        <div id="modalWindow" class="col-md-6 portBox" style="display: none">
             <div class="col-md-6 col-md-offset-3">
-                <form action="com.ebox.hovael.db/FuelStock.php" method="POST">
+                <form action="com.ebox.hovael.db/FuelStock.php" method="POST" id="updateForm">
                     <label>Fuel ID : </label>
                     <label id="idLabel"></label><br>
                     <input type="hidden" name="id" id="id">
@@ -41,7 +41,6 @@
                     <label> Name : </label><input type="text" name="name" id="name" required><br>
                     <label> Price : </label><input type="text" name="price" id="price" required><br>
                     <label> Qty : </label><input type="text" name="qty" id="qty" required><br>
-                    <label> Status : </label><input type="checkbox" name="status" id="status"><br>
                     <input type="hidden" value="update" name="function">
                     <input type="submit" value="Update" id="submit">
                 </form>
@@ -59,7 +58,7 @@
             $(document).ready(function () {
                 jQuery.ajax({
                     type: "POST",
-                    url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/Site.php', dataType: 'json',
+                    url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/SiteToController.php', dataType: 'json',
                     data: {functionname: 'search'},
                     success: function (obj, textstatus) {
                         if (!('error' in obj)) {
@@ -97,12 +96,13 @@
                                     }
                                     columnNumber++;
                                 });
-                               
-                                if (cellData[columnNumber] = '1') {
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\"></span></td>");
-                                } else {
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></td>");
-                                }
+
+//                                if (cellData[columnNumber] = '1') {
+//                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\"></span></td>");
+//                                } else {
+//                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></td>");
+//                                }
+                                $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></td>");
                                 $('#row' + cellData[0]).append("<td><button class=\"btn btn-primary\" onclick=\"update('" + cellData[0] + "')\" id=\"button" + cellData[0] + "\">Update</button></td>");
 
                             });
@@ -126,44 +126,47 @@
                 $('#name').val($('#row' + id + 'name').html());
                 $('#price').val($('#row' + id + 'price').html());
                 $('#qty').val($('#row' + id + 'qty').html());
-
-                if ($('#row' + id + "status").val() == '1') {
-                    $('#status').prop('checked', true);
-                }
-
+                $('#modalWindow').show();
                 $('#modalButton').click();
             }
 
         </script>
-        
+
         <script>
-            var allInputs = $(":input");
+//            var allInputs = $(":input");
+//
+//            $.each(allInputs, function (key, value) {
+//
+//                $(value).focusout(function () {
+//                    if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//            });
+//            $('#site').change(function () {
+//                
+//                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+//
+//            $('#status').change(function () {
+//                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
 
-            $.each(allInputs, function (key, value) {
-
-                $(value).focusout(function () {
-                    if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-
-            });
-            $('#site').change(function () {
-                
-                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
-            $('#status').change(function () {
-                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
+            $(document).on('submit', '#updateForm', function () {
+                if (!$.isNumeric($('#price').val()) || !$.isNumeric($('#qty').val())) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
                 }
             });
         </script>

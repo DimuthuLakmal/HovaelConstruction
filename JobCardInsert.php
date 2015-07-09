@@ -200,7 +200,6 @@ author:Dimuthu
                     }
                 }
             });
-            //var rowid = 1;
             $('#description').bind('keypress', function (e) {
                 if (e.keyCode == 13) {
                     $('#descriptiondiv').hide(250, 'linear');
@@ -251,8 +250,6 @@ author:Dimuthu
                         $('#lubricantdanger').hide('fast');
                         $('#costdiv').hide(250, 'linear');
                         $('#statusdiv').show(250, 'linear', function () {
-                            //$('#status').val('');
-                            //$('#status').focus();
                             var tr = "<td><input type=\"text\" class=\"form-control numerical\" value=\"" + $('#cost').val() + "\"></td>";
                             $(tr).appendTo('#lubricant' + rowid);
                         });
@@ -342,8 +339,6 @@ author:Dimuthu
                         $('#sparedanger').hide('fast');
                         $('#spareunitpricediv').hide(250, 'linear');
                         $('#sparestatusdiv').show(250, 'linear', function () {
-                            //$('#status').val('');
-                            //$('#status').focus();
                             var cost = $('#spareunitprice').val() * $('#spareqty').val();
                             var tr = "<td><input type=\"text\" class=\"form-control numerical\" value=\"" + $('#spareunitprice').val() + "\"></td><td><input type=\"text\" class=\"form-control\" value=\"" + cost + "\"></td>";
                             $(tr).appendTo('#spare' + sparerowid);
@@ -409,8 +404,6 @@ author:Dimuthu
                         $('#otherdanger').hide('fast');
                         $('#othercostdiv').hide(250, 'linear');
                         $('#otherstatusdiv').show(250, 'linear', function () {
-                            //$('#otherstatus').val('');
-                            //$('#otherstatus').focus();
                             var tr = "<td><input type=\"text\" class=\"form-control numerical\" value=\"" + $('#othercost').val() + "\"></td>";
                             $(tr).appendTo('#other' + otherrowid);
                         });
@@ -505,7 +498,7 @@ author:Dimuthu
                     }
 
 
-                    //                alert($id + ' ' + $siteid + ' ' + $registrationid + ' ' + $date + ' ' + $operator + ' ' + $nextmeter + ' ' + $presentmeter + ' ' + $docjobno + ' ' + $status);
+                    
                     jQuery.ajax({
                         type: "POST",
                         url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/JobCard.php',

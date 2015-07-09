@@ -15,7 +15,7 @@ author:Dimuthu
     include './com.ebox.hovael.db/autoIncrementID.php';
     ?>
     <body>
-        <form action="com.ebox.hovael.db/FuelStock.php" method="POST">
+        <form action="com.ebox.hovael.db/FuelStock.php" method="POST" id="insertForm">
             <label>Fuel ID : </label>
             <label ><?php echo $_SESSION['id'] ?></label><br>
             <input type="hidden" value="<?php echo $_SESSION['id'] ?>" name="id">
@@ -27,7 +27,7 @@ author:Dimuthu
             <label> Qty : </label><input type="text" name="qty" id="qty" required><br>
             <label> Status : </label><input type="checkbox" name="status" id="status"><br>
             <input type="hidden" value="insert" name="function">
-            <input type="submit" value="Add" id="submit" disabled>
+            <input type="submit" value="Add" id="submit">
         </form>
 
         <script type="text/javascript" src="./com.ebox.hovael.js/jquery-2.1.3.min.js"></script>      
@@ -35,7 +35,7 @@ author:Dimuthu
             $(document).ready(function () {
                 jQuery.ajax({
                     type: "POST",
-                    url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/Site.php',
+                    url: 'http://localhost/HovaelConstructions_v1.0/com.ebox.hovael.db/SiteToController.php',
                     dataType: 'json',
                     data: {functionname: 'search'},
                     success: function (obj, textstatus) {
@@ -55,36 +55,42 @@ author:Dimuthu
             });
         </script>
         <script>
-            var allInputs = $(":input");
-
-            $.each(allInputs, function (key, value) {
-
-                $(value).focusout(function () {
-                    if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-
-            });
-            $('#site').change(function () {
-                
-                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
-            $('#status').change(function () {
-                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
+//            var allInputs = $(":input");
+//
+//            $.each(allInputs, function (key, value) {
+//
+//                $(value).focusout(function () {
+//                    if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//            });
+//            $('#site').change(function () {
+//
+//                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+//
+//            $('#status').change(function () {
+//                if ($.isNumeric($('#price').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+            $(document).on('submit', '#insertForm', function () {
+                if (!$.isNumeric($('#price').val()) || !$.isNumeric($('#qty').val())) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
                 }
             });
         </script>
-        
+
     </body>
 </html>

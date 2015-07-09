@@ -32,9 +32,9 @@
                 </tbody>
             </table>
         </div>
-        <div id="modalWindow" class="col-md-6 portBox">
+        <div id="modalWindow" class="col-md-6 portBox" style="display: none">
             <div class="col-md-6 col-md-offset-3">
-                <form action="com.ebox.hovael.db/FuelBook.php" method="POST">
+                <form action="com.ebox.hovael.db/FuelBook.php" method="POST" id="updateForm">
                     <label>Fuel Book ID : </label>
                     <label id="idLabel"></label><br>
                     <input type="hidden" name="id" id="id">
@@ -47,7 +47,6 @@
                     <label> Qty : </label><input type="text" name="qty" id="qty" required><br>
                     <label> Meter Reading : </label><input type="text" name="meterreading" id="meterreading" required><br>
                     <label> Remarks : </label><input type="text" name="remarks" id="remarks"><br>
-                    <label> Status : </label><input type="checkbox" name="status" id="status"><br>
                     <input type="hidden" value="update" name="function">
                     <input type="submit" value="Update" id="submit">
                 </form>
@@ -106,12 +105,13 @@
                                     columnNumber++;
                                 });
 
-                                if (cellData[7] == '1') {
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\"></span></td>");
-                                } else {
-                                    //alert('cellData[7]');
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></td>");
-                                }
+//                                if (cellData[7] == '1') {
+//                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\"></span></td>");
+//                                } else {
+//                                    //alert('cellData[7]');
+//                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></td>");
+//                                }
+                                $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></td>");
                                 $('#row' + cellData[0]).append("<td><button class=\"btn btn-primary\" onclick=\"update('" + cellData[0] + "')\" id=\"button" + cellData[0] + "\">Update</button></td>");
 
                             });
@@ -137,11 +137,7 @@
                 $('#qty').val($('#row' + id + 'qty').html());
                 $('#meterreading').val($('#row' + id + 'meterreading').html());
                 $('#remarks').val($('#row' + id + 'remarks').html());
-
-                if ($('#row' + id + "status").val() == '1') {
-                    $('#status').prop('checked', true);
-                }
-
+                $('#modalWindow').show();
                 $('#modalButton').click();
             }
 
@@ -176,26 +172,23 @@
                     dataType: 'json',
                     data: {functionname: 'searchBetween', fromdate: $fromdate, todate: $todate},
                     success: function (obj, textstatus) {
+                        $('#viewtable tbody tr').remove();
                         if (!('error' in obj)) {
                             var columns = ['id', 'regno', 'fuel', 'date', 'qty', 'meterreading', 'remarks'];
                             $.each(obj, function (key, value) {
                                 var cellData = value.split(':');
-                                alert(value);
+                                //alert(value);                              
                                 $('#viewtable tbody').append("<tr id=\"row" + cellData[0] + "\"></tr>");
                                 var columnNumber = 0;
                                 $.each(cellData, function (key, value) {
                                     if (columnNumber != 7) {
                                         $('#row' + cellData[0]).append("<td id=\"row" + cellData[0] + columns[columnNumber] + "\">" + value + "</td>");
+                                        //alert('fdasdf');
                                     }
                                     columnNumber++;
                                 });
 
-                                if (cellData[7] == '1') {
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-ok\" aria-hidden=\"true\"></span></td>");
-                                } else {
-                                    //alert('cellData[7]');
-                                    $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></label><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></td>");
-                                }
+                                $('#row' + cellData[0]).append("<td><label id=\"row" + cellData[0] + "\status\" value=\"1\"></td>");
                                 $('#row' + cellData[0]).append("<td><button class=\"btn btn-primary\" onclick=\"update('" + cellData[0] + "')\" id=\"button" + cellData[0] + "\">Update</button></td>");
 
                             });
@@ -232,36 +225,42 @@
                 }
             });
 
-            var allInputs = $(":input");
+//            var allInputs = $(":input");
+//
+//            $.each(allInputs, function (key, value) {
+//
+//                $(value).focusout(function () {
+//                    if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//            });
+//            $('#fuel').change(function () {
+//
+//                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
+//
+//            $('#status').change(function () {
+//                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
+//                    $('#submit').removeAttr('disabled');
+//                } else {
+//                    $('#submit').attr('disabled', true);
+//                }
+//            });
 
-            $.each(allInputs, function (key, value) {
-
-                $(value).focusout(function () {
-                    if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-
-            });
-            $('#fuel').change(function () {
-
-                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
+            $(document).on('submit', '#updateForm', function () {
+                if (!$isDateOk || !$isRegNoOk || !$.isNumeric($('#meterreading').val()) || !$.isNumeric($('#qty').val())) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
                 }
             });
-
-            $('#status').change(function () {
-                if ($isDateOk && $isRegNoOk && $.isNumeric($('#meterreading').val()) && $.isNumeric($('#qty').val())) {
-                    $('#submit').removeAttr('disabled');
-                } else {
-                    $('#submit').attr('disabled', true);
-                }
-            });
-
         </script>
     </body>
 </html>

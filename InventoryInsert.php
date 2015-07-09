@@ -14,7 +14,7 @@ author:Dimuthu
     include './com.ebox.hovael.db/autoIncrementID.php';
     ?>
     <body>
-        <form action="com.ebox.hovael.db/Inventory.php" method="POST">
+        <form action="com.ebox.hovael.db/Inventory.php" method="POST" id="insertForm">
             <label>Inventory Type ID : </label>
             <label ><?php echo $_SESSION['id'] ?></label><br>
             <input type="hidden" value="<?php echo $_SESSION['id'] ?>" name="id">
@@ -30,7 +30,7 @@ author:Dimuthu
             <label> Operator : </label><input type="text" name="operator" required id="operator"><br>
             <label> Status : </label><input type="checkbox" name="status" id="status"><br>
             <input type="hidden" value="insert" name="function">
-            <input type="submit" value="Add" id="submit" disabled>
+            <input type="submit" value="Add" id="submit">
         </form>
 
         <script type="text/javascript" src="./com.ebox.hovael.js/jquery-2.1.3.min.js"></script> 
@@ -103,30 +103,36 @@ author:Dimuthu
 //
 //            });
 
-            $.each(allInputs, function (key, value) {
-                $(value).focusout(function () {
-                    if ($isDateOk && $isYearOk && $isRegNoOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-                $('#type').change(function () {
-                    if ($isDateOk && $isYearOk && $isRegNoOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
-
-                $('#status').change(function () {
-                    if ($isDateOk && $isYearOk && $isRegNoOk) {
-                        $('#submit').removeAttr('disabled');
-                    } else {
-                        $('#submit').attr('disabled', true);
-                    }
-                });
+//            $.each(allInputs, function (key, value) {
+//                $(value).focusout(function () {
+//                    if ($isDateOk && $isYearOk && $isRegNoOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//                $('#type').change(function () {
+//                    if ($isDateOk && $isYearOk && $isRegNoOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+//
+//                $('#status').change(function () {
+//                    if ($isDateOk && $isYearOk && $isRegNoOk) {
+//                        $('#submit').removeAttr('disabled');
+//                    } else {
+//                        $('#submit').attr('disabled', true);
+//                    }
+//                });
+            $(document).on('submit', '#insertForm', function () {
+                if (!$isDateOk || !$isYearOk || !$isRegNoOk) {
+                    event.preventDefault();
+                    alert('Please fill correctly');
+                }
             });
+         
         </script>
     </body>
 </html>
