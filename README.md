@@ -1,0 +1,3 @@
+# HovaelConstruction
+A computerized system for handling the functionality of the Department of Operations of HOVAEL Constructions, a renowned company focused on construction sector. The main objective of the system is to interconnect the head office in Colombo and other sites located island-wide so that the functions such as report maintenance, transfer processes, vehicles and machinery maintenance and alert generation upon several criteria, will be managed and documented. This system was developed for the requirements for CS2062 Object Oriented Software Development module in the Department of Computer Science and Engineering at University of Moratuwa.
+<br>Technologies: PHP, JQuery, JavaScript, Boostrap, MySQL, CSS
