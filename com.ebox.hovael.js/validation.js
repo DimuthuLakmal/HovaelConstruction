@@ -9,9 +9,9 @@ function isDate(txtDate)
     var dtArray = currVal.match(rxDatePattern); // is format OK?
     if (dtArray == null)
         return false;
-    
+
     //Checks for mm/dd/yyyy format.
-    
+
     dtYear = dtArray[1];
     dtMonth = dtArray[3];
     dtDay = dtArray[5];

@@ -23,12 +23,12 @@ class SiteController {
 
         $r = mysql_query("INSERT INTO site(id, location, permanent, startdate, enddate, projectmanager, sitemanager, status) VALUES('$id','$location','$permanent','$startdate','$enddate','$projectmanager','$sitemanager','$status')", $con);
 
-        header('Location: http://localhost/HovaelConstructions_v1.0/SiteInsert.php');
+        header('Location: ../SiteView.php');
     }
 
     function search() {
 
-        $query = "SELECT * FROM site";
+        $query = "SELECT * FROM site WHERE status!=0";
 
         $result = array();
         $i = 0;
@@ -77,7 +77,7 @@ function update(Site $site) {
     if (!$r) {
         die('Could not update data: ' . mysql_error());
     }
-    header('Location: http://localhost/HovaelConstructions_v1.0/SiteUpdate.php');
+    header('Location: ../SiteUpdate.php');
 }
 
 ?>

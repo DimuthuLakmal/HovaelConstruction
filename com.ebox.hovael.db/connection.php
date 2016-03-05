@@ -2,7 +2,7 @@
 
 $mysql_host = 'localhost';
 $mysqluser = 'root';
-$mysqlpass = 'ijse';
+$mysqlpass = '123';
 
 $con = mysql_connect($mysql_host, $mysqluser, $mysqlpass);
 $db = mysql_select_db('hovael');

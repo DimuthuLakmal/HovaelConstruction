@@ -9,7 +9,7 @@ class InventoryTypeController {
     }
 
     function insert(InventoryType $inventoryType) {
-        
+
         global $con;
         $id = $inventoryType->getId();
         $category = $inventoryType->getCategory();
@@ -19,10 +19,9 @@ class InventoryTypeController {
         $country = $inventoryType->getCountry();
         $status = $inventoryType->getStatus();
 
-
         $r = mysql_query("INSERT INTO inventorytype(id, idinventorycat, model, make, capacity, country, status) VALUES('$id','$category','$model','$make','$capacity','$country','$status')", $con);
 
-        header('Location: http://localhost/HovaelConstructions_v1.0/InventoryTypeInsert.php');
+        header('Location: ../InventoryView.php');
     }
 
 }

@@ -1,16 +1,23 @@
 <?php
 
+session_start();
 header('Content-Type: application/json');
 include './connection.php';
 
 $selectAll = array();
+$selectForInvoice = array();
 $aResult = array();
 
 if (isset($_POST['functionname'])) {
     if ('selectAll' == $_POST['functionname']) {
         $aResult = selectAll();
         echo json_encode($aResult);
-    }if ('search' == $_POST['functionname']) {
+    }
+    if ('selectForInvoice' == $_POST['functionname']) {
+        $aResult = selectForInvoice();
+        echo json_encode($aResult);
+    }
+    if ('search' == $_POST['functionname']) {
         $aResult['result'] = search();
         echo json_encode($aResult);
     }
@@ -35,13 +42,35 @@ function selectAll() {
             $result = '';
             while ($row = mysql_fetch_assoc($query_run)) {
                 $siteLocation = searchSite($row['idsite']);
-                $result .= $row['id'] . ':' . $siteLocation . ':' . $row['name'] . ':' . $row['price'] . ':' . $row['qty'] . ':' . $row['status'];
+                $result .= $row['id'] . ':' . $siteLocation . ':' . $row['date'] . ':' . $row['name'] . ':' . $row['price'] . ':' . $row['qty'] . ':' . $row['status'];
                 $data[$index] = $result;
                 $index++;
                 $result = '';
-                $handle = fopen('count.txt', 'a');
-                fwrite($handle, $row['id'] . ':' . $siteLocation . ':' . $row['name'] . ':' . $row['price'] . ':' . $row['qty'] . ':' . $row['status']);
-                fclose($handle);
+//                $handle = fopen('count.txt', 'a');
+//                fwrite($handle, $row['id'] . ':' . $siteLocation . ':' . $row['name'] . ':' . $row['price'] . ':' . $row['qty'] . ':' . $row['status']);
+//                fclose($handle);
+            }
+        }
+    }
+    return $data;
+}
+
+function selectForInvoice() {
+    $site = $_POST['site'];
+    $year = $_POST['year'];
+    $month = $_POST['month'];
+    $query = "SELECT * FROM fuelstock WHERE idsite='$site' AND date LIKE '$year-$month%'";
+    $data = array();
+    $index = 0;
+
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            $result = '';
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $result .= $row['id'] . ':' . $row['date'] . ':' . $row['name'] . ':' . $row['price'] . ':' . $row['qty'];
+                $data[$index] = $result;
+                $index++;
+                $result = '';
             }
         }
     }
@@ -66,45 +95,35 @@ function searchSite($id) {
 function insert($con) {
     $id = $_POST['id'];
     $idsite = $_POST['site'];
+    $date = $_POST['date'];
     $name = $_POST['name'];
     $price = $_POST['price'];
     $qty = $_POST['qty'];
-    $status = $_POST['status'];
-
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
 
     //echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
 
-    $r = mysql_query("INSERT INTO fuelstock(id,idsite,name,price,qty ,status) VALUES('$id','$idsite','$name','$price','$qty','$status')", $con);
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/FuelStockInsert.php');
+    $r = mysql_query("INSERT INTO fuelstock(id,idsite,date,name,price,qty ,status) VALUES('$id','$idsite','$date','$name','$price','$qty','1')", $con);
+    if (!$r) {
+        header('Location: ../FuelStockInsert.php?msg=error');
+    }
+    header('Location: ../FuelStockView.php');
 }
 
 function update($con) {
     $id = $_POST['id'];
     $siteid = $_POST['site'];
+    $date = $_POST['date'];
     $name = $_POST['name'];
     $price = $_POST['price'];
     $qty = $_POST['qty'];
-    $status = $_POST['status'];
-    
-    $siteid=  searchSiteByLocation($_POST['site']);
-    if ($status == '1') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
-    
-    $r = mysql_query("UPDATE fuelstock SET idsite='$siteid',name='$name',price='$price',qty='$qty',status='$status' WHERE id='$id'", $con);
+
+    $siteid = searchSiteByLocation($_POST['site']);
+
+    $r = mysql_query("UPDATE fuelstock SET idsite='$siteid',date='$date',name='$name',price='$price',qty='$qty' WHERE id='$id'", $con);
     if (!$r) {
-        die('Could not update data: ' . mysql_error());
+        header('Location: ../FuelStockView.php?msg=error');
     }
-    
-    header('Location: http://localhost/HovaelConstructions_v1.0/FuelStockUpdate.php');
+    header('Location: ../FuelStockView.php');
 }
 
 function searchSiteByLocation($location) {
@@ -123,14 +142,16 @@ function searchSiteByLocation($location) {
 }
 
 function search() {
-
-    $query = "SELECT * FROM fuelstock";
+    $site = $_SESSION['location'];
+    $query = "SELECT DISTINCT fuelstock.name FROM fuelstock JOIN site ON fuelstock.idsite=site.id WHERE site.location='$site'";
+//    $query = "SELECT * FROM fuelstock";
 
     $result = '';
     if ($query_run = mysql_query($query)) {
         if (mysql_num_rows($query_run) != NULL) {
             while ($row = mysql_fetch_assoc($query_run)) {
-                $result.=$row['name'] . ':' . $row['id'] . ',';
+//                $result.=$row['name'] . ':' . $row['id'] . ',';
+                $result.=$row['name'] . ',';
             }
         }
     }

@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 header('Content-Type: application/json');
 include './connection.php';
 
@@ -32,7 +33,7 @@ if (isset($_POST['function']) && !empty($_POST['function']) && 'update' == $_POS
 function searchBetween() {
     $fromdate = $_POST['fromdate'];
     $todate = $_POST['todate'];
-    $query = "SELECT * FROM fuelbook where date between '$fromdate' and '$todate'";
+    $query = "SELECT * FROM fuelbook WHERE date BETWEEN '$fromdate' and '$todate'";
     $data = array();
     $index = 0;
 
@@ -40,9 +41,10 @@ function searchBetween() {
         if (mysql_num_rows($query_run) != NULL) {
             $result = '';
             while ($row = mysql_fetch_assoc($query_run)) {
+                $code = searchInventory1($row['idinventory']);
                 $regno = searchInventory($row['idinventory']);
-                $fuel = searchFuel($row['idfuelstock']);
-                $result .= $row['id'] . ':' . $regno . ':' . $fuel . ':' . $row['date'] . ':' . $row['qty'] . ':' . $row['meterreading'] . ':' . $row['remarks'] . ':' . $row['status'];
+                $site = searchSite($row['idsite']);
+                $result .= $row['id'] . ':' . $code . ':' . $regno . ':' . $site . ':' . $row['name'] . ':' . $row['date'] . ':' . $row['qty'] . ':' . $row['meterreading'] . ':' . $row['remarks'] . ':' . $row['status'];
                 $data[$index] = $result;
                 $index++;
                 $result = '';
@@ -54,32 +56,58 @@ function searchBetween() {
 
 function insert($con) {
     $id = $_POST['id'];
-    $regno = $_POST['regno'];
-    $fuelName = $_POST['fuel'];
+    $idsite = $_POST['idsite'];
+    $code = $_POST['code'];
+    $fuel = $_POST['fuel'];
     $date = $_POST['date'];
     $qty = $_POST['qty'];
     $meterReading = $_POST['meterreading'];
     $remarks = $_POST['remarks'];
-    $status = $_POST['status'];
 
-    $fuelId = searchFromName($fuelName);
-    $idinventory = searchByRegistrationNumber($regno);
+//    $fuelId = searchFromName($fuelName);
+//    $idinventory = searchByRegistrationNumber($regno);
+    $idinventory = searchByCode($code);
 
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
+    $inQty = 0;
+    $query = "SELECT qty FROM fuelstock WHERE idsite='$idsite' AND name='$fuel' AND status!=0";
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $inQty += $row['qty'];
+            }
+        }
     }
 
-    //echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
+    $outQty = 0;
+    $query = "SELECT qty FROM fuelbook WHERE idsite='$idsite' AND name='$fuel' AND status!=0";
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $outQty += $row['qty'];
+            }
+        }
+    }
 
-    $r = mysql_query("INSERT INTO fuelbook(id,idinventory,idfuelstock,date,qty,meterreading,remarks ,status) VALUES('$id','$idinventory','$fuelId','$date','$qty','$meterReading','$remarks','$status')", $con);
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/FuelBookInsert.php');
+    $newQty = $inQty - $outQty - $qty;
+    if ($newQty >= 0) {
+        $r = mysql_query("INSERT INTO fuelbook(id,idinventory,idsite,name,date,qty,meterreading,remarks,status) VALUES('$id','$idinventory','$idsite','$fuel','$date','$qty','$meterReading','$remarks','1')", $con);
+        if (!$r) {
+            header('Location: ../FuelBookInsert.php?msg=error');
+        }
+//        $res = mysql_query("UPDATE fuelstock SET qty='$newQty' WHERE idsite='$idsite' AND name='$fuel'", $con);
+//        if (!$res) {
+//            header('Location: ../FuelBookInsert.php?msg=error');
+//        }
+        header('Location: ../FuelBookView.php');
+    } else {
+        header('Location: ../FuelBookInsert.php?msg=notenough');
+    }
 }
 
 function searchFromName($name) {
-    $query = "SELECT * FROM fuelstock WHERE id=$name";
+    $site = $_SESSION['location'];
+    $query = "SELECT fuelstock.id FROM fuelstock JOIN site ON fuelstock.idsite=site.id WHERE site.location='$site' AND fuelstock.name='$name' AND status!=0";
+//    $query = "SELECT * FROM fuelstock WHERE id=$name";
 
     $result = '';
     if ($query_run = mysql_query($query)) {
@@ -107,6 +135,21 @@ function searchByRegistrationNumber($regno) {
     return $result;
 }
 
+function searchByCode($code) {
+
+    $query = "SELECT * FROM inventory where code='$code'";
+
+    $result = '';
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $result.=$row['id'];
+            }
+        }
+    }
+    return $result;
+}
+
 function searchInventory($id) {
 
     $query = "SELECT * FROM inventory where id='$id'";
@@ -122,15 +165,30 @@ function searchInventory($id) {
     return $result;
 }
 
-function searchFuel($id) {
+function searchInventory1($id) {
 
-    $query = "SELECT * FROM fuelstock where id='$id'";
+    $query = "SELECT * FROM inventory where id='$id'";
 
     $result = '';
     if ($query_run = mysql_query($query)) {
         if (mysql_num_rows($query_run) != NULL) {
             while ($row = mysql_fetch_assoc($query_run)) {
-                $result.=$row['name'];
+                $result.=$row['code'];
+            }
+        }
+    }
+    return $result;
+}
+
+function searchSite($id) {
+
+    $query = "SELECT * FROM site WHERE id='$id'";
+
+    $result = '';
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $result.=$row['location'];
             }
         }
     }
@@ -146,9 +204,10 @@ function selectAll() {
         if (mysql_num_rows($query_run) != NULL) {
             $result = '';
             while ($row = mysql_fetch_assoc($query_run)) {
+                $code = searchInventory1($row['idinventory']);
                 $regno = searchInventory($row['idinventory']);
-                $fuel = searchFuel($row['idfuelstock']);
-                $result .= $row['id'] . ':' . $regno . ':' . $fuel . ':' . $row['date'] . ':' . $row['qty'] . ':' . $row['meterreading'] . ':' . $row['remarks'] . ':' . $row['status'];
+                $site = searchSite($row['idsite']);
+                $result .= $row['id'] . ':' . $code . ':' . $regno . ':' . $site . ':' . $row['name'] . ':' . $row['date'] . ':' . $row['qty'] . ':' . $row['meterreading'] . ':' . $row['remarks'] . ':' . $row['status'];
                 $data[$index] = $result;
                 $index++;
                 $result = '';
@@ -160,29 +219,23 @@ function selectAll() {
 
 function update($con) {
     $id = $_POST['id'];
-    $regno = $_POST['regno'];
+    $code = $_POST['code'];
+//    $regno = $_POST['regno'];
     $fuelName = $_POST['fuel'];
     $date = $_POST['date'];
     $qty = $_POST['qty'];
     $meterReading = $_POST['meterreading'];
     $remarks = $_POST['remarks'];
-    $status = $_POST['status'];
 
-    $fuelId = searchFromName($fuelName);
-    $idinventory = searchByRegistrationNumber($regno);
+//    $fuelId = searchFromName($fuelName);
+//    $idinventory = searchByRegistrationNumber($regno);
+//    $idinventory = searchByCode($code);
 
-    if ($status == '1') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
-
-    $r = mysql_query("UPDATE fuelbook SET idinventory='$idinventory',idfuelstock='$fuelId',date='$date',qty='$qty',meterreading='$meterReading',remarks='$remarks',status='$status' WHERE id='$id'", $con);
+    $r = mysql_query("UPDATE fuelbook SET name='$fuelName',date='$date',qty='$qty',meterreading='$meterReading',remarks='$remarks' WHERE id='$id'", $con);
     if (!$r) {
-        die('Could not update data: ' . mysql_error());
+        header('Location: ../FuelBookView.php?msg=error');
     }
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/FuelBookUpdate.php');
+    header('Location: ../FuelBookView.php');
 }
 
 ?>

@@ -1,14 +1,15 @@
 <?php
-class InventoryType{
-    
+
+class InventoryType {
+
     private $id;
     private $category;
     private $make;
-    private $model ;
+    private $model;
     private $capacity;
     private $country;
     private $status;
-    
+
     function __construct($id, $category, $make, $model, $capacity, $country, $status) {
         $this->id = $id;
         $this->category = $category;
@@ -18,7 +19,7 @@ class InventoryType{
         $this->country = $country;
         $this->status = $status;
     }
-    
+
     function getId() {
         return $this->id;
     }
@@ -74,11 +75,5 @@ class InventoryType{
     function setStatus($status) {
         $this->status = $status;
     }
-
-
-
 }
-
-
-
 ?>

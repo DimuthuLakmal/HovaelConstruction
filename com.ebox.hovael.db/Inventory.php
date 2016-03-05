@@ -17,14 +17,23 @@ if (isset($_POST['functionname'])) {
         echo json_encode($searchForDisplay);
     }
     if ('searchByRegNo' == $_POST['functionname']) {
-        $searchByRegNo[0]=searchByRegistrationNumber($_POST['regno']);
+        $searchByRegNo[0] = searchByRegistrationNumber($_POST['regno']);
         echo json_encode($searchByRegNo);
+    }
+    if ('searchCode' == $_POST['functionname']) {
+        $aResult['result'] = searchCode();
+        echo json_encode($aResult);
+    }
+    if ('searchRegNo' == $_POST['functionname']) {
+        $aResult['result'] = searchRegNo($_POST['id']);
+        echo json_encode($aResult);
     }
 }
 
 function insert($con) {
     $id = $_POST['id'];
     $inventoryType = $_POST['type'];
+    $code = $_POST['code'];
     $regno = $_POST['regno'];
     $engno = $_POST['engno'];
     $sno = $_POST['sno'];
@@ -32,32 +41,34 @@ function insert($con) {
     $date = $_POST['date'];
     $hireinternal = $_POST['hireinternal'];
     $operator = $_POST['operator'];
-    $status = $_POST['status'];
 
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
+    $r = mysql_query("INSERT INTO inventory(id, idinventorytype, code, regno, engno, sno, year, date, hireinternal, operator, status) VALUES('$id','$inventoryType','$code','$regno','$engno','$sno','$year','$date','$hireinternal','$operator','1')", $con);
+    if (!$r) {
+        header('Location: ../InventoryInsert.php?msg=error');
     }
-
-
-    $r = mysql_query("INSERT INTO inventory(id, idinventorytype, regno, engno, sno, year, date, hireinternal, operator, status) VALUES('$id','$inventoryType','$regno','$engno','$sno','$year','$date','$hireinternal','$operator','$status')", $con);
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/InventoryInsert.php');
+    header('Location: ../InventoryView.php');
 }
 
 function searchForDisplay($category) {
-    
     global $searchForDisplay;
-    $query = "SELECT i.id,i.regno,it.model,it.make,it.country,i.engno,i.sno,it.capacity,i.year,i.operator,i.hireinternal,i.date,i.status,i.idinventorytype FROM inventory i inner join inventorytype it on i.idinventorytype = it.id inner join inventorycat itcat on itcat.id=it.idinventorycat where itcat.category='$category';";
+    $query = "SELECT i.id,i.code,i.regno,it.model,it.make,it.country,i.engno,i.sno,it.capacity,i.year,i.operator,i.hireinternal,i.date,i.status,i.idinventorytype FROM inventory i INNER JOIN inventorytype it ON i.idinventorytype = it.id INNER JOIN inventorycat itcat ON itcat.id=it.idinventorycat WHERE itcat.category='$category'";
     if ($query_run = mysql_query($query)) {
         if (mysql_num_rows($query_run) != NULL) {
-            while ($row = mysql_fetch_assoc($query_run)) {                
-                $searchForDisplay[]=$row['id'].','.$row['regno'].','.$row['model'].','.$row['make'].','.$row['country'].','.$row['engno'].','.$row['sno'].','.$row['capacity'].','.$row['year'].','.$row['operator'].','.$row['hireinternal'].','.$row['date'].','.$row['status'].','.$row['idinventorytype'];
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $id = $row['id'];
+                $query2 = "SELECT s.location FROM site s JOIN transfernote tn ON tn.idsiteto=s.id WHERE tn.idinventory=$id ORDER BY tn.id DESC LIMIT 1";
+                if ($query_run2 = mysql_query($query2)) {
+                    if (mysql_num_rows($query_run2) != NULL) {
+                        if ($row2 = mysql_fetch_assoc($query_run2)) {
+                            $searchForDisplay[] = $row['id'] . ',' . $row['code'] . ',' . $row['regno'] . ',' . $row['model'] . ',' . $row['make'] . ',' . $row['country'] . ',' . $row['engno'] . ',' . $row['sno'] . ',' . $row['capacity'] . ',' . $row['year'] . ',' . $row['operator'] . ',' . $row['hireinternal'] . ',' . $row['date'] . ',' . $row2['location'] . ',' . $row['status'] . ',' . $row['idinventorytype'];
+                        }
+                    } else {
+                        $searchForDisplay[] = $row['id'] . ',' . $row['code'] . ',' . $row['regno'] . ',' . $row['model'] . ',' . $row['make'] . ',' . $row['country'] . ',' . $row['engno'] . ',' . $row['sno'] . ',' . $row['capacity'] . ',' . $row['year'] . ',' . $row['operator'] . ',' . $row['hireinternal'] . ',' . $row['date'] . ',' . "Head Office" . ',' . $row['status'] . ',' . $row['idinventorytype'];
+                    }
+                }
             }
         }
     }
-    
 }
 
 function searchByRegistrationNumber($regno) {
@@ -90,9 +101,40 @@ function search() {
     return $result;
 }
 
+function searchCode() {
+
+    $query = "SELECT * FROM inventory";
+
+    $result = '';
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $result.=$row['id'] . ':' . $row['code'] . ',';
+            }
+        }
+    }
+    return $result;
+}
+
+function searchRegNo($code) {
+
+    $query = "SELECT regno FROM inventory WHERE code='$code'";
+
+    $result = '';
+    if ($query_run = mysql_query($query)) {
+        if (mysql_num_rows($query_run) != NULL) {
+            while ($row = mysql_fetch_assoc($query_run)) {
+                $result.=$row['regno'] . ',';
+            }
+        }
+    }
+    return $result;
+}
+
 function update($con) {
     $idinventorytype = $_POST['idinventorytype'];
     $id = $_POST['id'];
+    $code = $_POST['code'];
     $regno = $_POST['regno'];
     $sno = $_POST['sno'];
     $engno = $_POST['engno'];
@@ -100,30 +142,22 @@ function update($con) {
     $date = $_POST['date'];
     $hireinternal = $_POST['hireinternal'];
     $operator = $_POST['operator'];
-    $status = $_POST['status'];
-    
+
     $model = $_POST['model'];
     $make = $_POST['make'];
     $capacity = $_POST['capacity'];
     $country = $_POST['country'];
-    
-    echo $status;
-    if ($status == '1') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
+
     $r = mysql_query("UPDATE hovael.inventorytype SET model='$model',make='$make',capacity='$capacity',country='$country' WHERE id='$idinventorytype'", $con);
     if (!$r) {
-        die('Could not update data: ' . mysql_error());
-    }
-    else{
-        $r = mysql_query("UPDATE hovael.inventory SET regno='$regno',sno='$sno',engno='$engno',year='$year',date='$date',hireinternal='$hireinternal',operator='$operator',status='$status' WHERE id='$id'", $con);
-        if(!$r){
-            die('Could not update data: ' . mysql_error());
+        header('Location: ../InventoryView.php?msg=error');
+    } else {
+        $r = mysql_query("UPDATE hovael.inventory SET code='$code',regno='$regno',sno='$sno',engno='$engno',year='$year',date='$date',hireinternal='$hireinternal',operator='$operator' WHERE id='$id'", $con);
+        if (!$r) {
+            header('Location: ../InventoryView.php?msg=error');
         }
     }
-    header('Location: http://localhost/HovaelConstructions_v1.0/InventoryUpdate.php');
+    header('Location: ../InventoryView.php');
 }
 
 if (isset($_POST['function']) && !empty($_POST['function']) && 'insert' == $_POST['function']) {

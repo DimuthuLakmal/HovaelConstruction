@@ -38,12 +38,13 @@ function insert($con) {
         $permanent = 0;
     }
 
-    
-    echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
+//    echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
 
     $r = mysql_query("INSERT INTO site(id, location, permanent, startdate, enddate, projectmanager, sitemanager, status) VALUES('$id','$location','$permanent','$startdate','$enddate','$projectmanager','$sitemanager','$status')", $con);
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/SiteInsert.php');
+    if (!$r) {
+        header('Location: ../SiteInsert.php?msg=error');
+    }
+    header('Location: ../SiteView.php');
 }
 
 function search() {
@@ -69,24 +70,18 @@ function update($con) {
     $enddate = $_POST['enddate'];
     $projectmanager = $_POST['projectmanager'];
     $permanent = $_POST['permanent'];
-    $status = $_POST['status'];
-
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
+    
     if ($permanent == 'on') {
         $permanent = 1;
     } else {
         $permanent = 0;
     }
 
-    $r = mysql_query("UPDATE hovael.site SET location='$location',projectmanager='$projectmanager',sitemanager='$sitemanager',enddate='$enddate',startdate='$startdate',permanent='$permanent',status='$status' WHERE id='$id'", $con);
+    $r = mysql_query("UPDATE site SET location='$location',projectmanager='$projectmanager',sitemanager='$sitemanager',enddate='$enddate',startdate='$startdate',permanent='$permanent' WHERE id='$id'", $con);
     if (!$r) {
-        die('Could not update data: ' . mysql_error());
+        header('Location: ../SiteUpdate.php?msg=error');
     }
-    header('Location: http://localhost/HovaelConstructions_v1.0/SiteUpdate.php');
+    header('Location: ../SiteView.php');
 }
 
 function searchFromId($id) {

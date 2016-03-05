@@ -14,18 +14,10 @@ function insert() {
     $model = $_POST['model'];
     $capacity = $_POST['capacity'];
     $country = $_POST['country'];
-    $status = $_POST['status'];
 
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
-
-    $inventoryType = new InventoryType($id, $category, $make, $model, $capacity, $country, $status);
+    $inventoryType = new InventoryType($id, $category, $make, $model, $capacity, $country, 1);
     $inventoryTypeController = new InventoryTypeController();
     $inventoryTypeController->insert($inventoryType);
-    
 }
 
 ?>

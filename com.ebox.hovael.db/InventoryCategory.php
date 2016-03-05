@@ -3,7 +3,6 @@
 header('Content-Type: application/json');
 include './connection.php';
 
-
 $aResult = array();
 $searchResultFromId = array();
 
@@ -22,21 +21,12 @@ function insert($con) {
     $category = $_POST['category'];
     $type = $_POST['type'];
     $service = $_POST['service'];
-    $status = $_POST['status'];
 
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
-
-
-    $r = mysql_query("INSERT INTO inventorycat(id, category, type, service, status) VALUES('$id','$category','$type','$service','$status')", $con);
+    $r = mysql_query("INSERT INTO inventorycat(id, category, type, service, status) VALUES('$id','$category','$type','$service','1')", $con);
     if (!$r) {
-        die('Could not insert data: ' . mysql_error());
+        header('Location: ../InventoryCategoryInsert.php?msg=error');
     }
-
-    header('Location: http://localhost/HovaelConstructions_v1.0/InventoryCategoryInsert.php');
+    header('Location: ../InventoryCategoryView.php');
 }
 
 function update($con) {
@@ -53,9 +43,9 @@ function update($con) {
 
     $r = mysql_query("UPDATE hovael.inventorycat SET type='$type',service='$service',status='$status' WHERE id='$id'", $con);
     if (!$r) {
-        die('Could not update data: ' . mysql_error());
+        header('Location: ../InventoryCategoryView.php?msg=error');
     }
-    header('Location: http://localhost/HovaelConstructions_v1.0/InventoryCategoryUpdate.php');
+    header('Location: ../InventoryCategoryView.php');
 }
 
 function search() {

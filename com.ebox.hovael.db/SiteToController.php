@@ -20,13 +20,6 @@ function insert() {
     $projectmanager = $_POST['projectmanager'];
     $sitemanager = $_POST['sitemanager'];
     $permanent = $_POST['permanent'];
-    $status = $_POST['status'];
-
-    if ($status == 'on') {
-        $status = 1;
-    } else {
-        $status = 0;
-    }
 
     if ($permanent == 'on') {
         $permanent = 1;
@@ -34,8 +27,8 @@ function insert() {
         $permanent = 0;
     }
 
-    $site = new Site($id, $location, $startdate, $enddate, $projectmanager, $sitemanager, $permanent, $status);
-   
+    $site = new Site($id, $location, $startdate, $enddate, $projectmanager, $sitemanager, $permanent, 1);
+
     //echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
 
     $siteController = new SiteController();
@@ -44,17 +37,16 @@ function insert() {
     //header('Location: http://localhost/HovaelConstructions_v1.0/SiteInsert.php');
 }
 
-
 if (isset($_POST['functionname'])) {
     $siteController = new SiteController();
     if ('search' == $_POST['functionname']) {
         $aResult = $siteController->search();
         $result = '';
-        for($i=0;$i<count($aResult);$i++){
+        for ($i = 0; $i < count($aResult); $i++) {
             $site = $aResult[$i];
-            $result.=   ($site->getLocation()) . ':' . ($site->getid()) . ',';
+            $result.= ($site->getLocation()) . ':' . ($site->getid()) . ',';
         }
-        $final['result']=$result;
+        $final['result'] = $result;
         echo json_encode($final);
     }
 }
@@ -81,12 +73,11 @@ function update_form($con) {
     }
 
     $site = new Site($id, $location, $startdate, $enddate, $projectmanager, $sitemanager, $permanent, $status);
-   
+
     //echo $id . ' ' . $location . ' ' . $permanent . ' ' . $startdate . ' ' . $enddate . ' ' . $projectmanager . ' ' . $sitemanager . ' ' . $status;
 
     $siteController = new SiteController();
     $siteController->update($site);
-    
 }
 
 ?>
